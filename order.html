@@ -137,9 +137,10 @@
         inset: 0;
         background: rgba(0, 0, 0, 0.45);
         display: none;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         z-index: 2000;
+        padding-bottom: env(safe-area-inset-bottom);
       }
 
       .modal {
@@ -206,6 +207,9 @@
         td:nth-child(1) {
           font-size: 13px;
         }
+        .modal input {
+          font-size: 16px;
+        }
 
         .product-cell span {
           font-size: 13px;
@@ -213,6 +217,13 @@
       }
       .modal button {
         border-radius: 8px;
+      }
+
+      @media (max-width: 600px) {
+        .modal {
+          max-height: calc(100vh - 40px);
+          overflow-y: auto;
+        }
       }
 
       /* ================= MOBILE ================= */
@@ -312,6 +323,12 @@
         font-size: 14px;
         color: #d32f2f;
         margin-bottom: 10px;
+      }
+
+      body.modal-open {
+        position: fixed;
+        width: 100%;
+        overflow: hidden;
       }
 
       /* Bottom row layout */
@@ -506,10 +523,12 @@
       }
 
       function openModal() {
+        document.body.classList.add("modal-open");
         checkoutModal.style.display = "flex";
       }
 
       function closeModal() {
+        document.body.classList.remove("modal-open");
         checkoutModal.style.display = "none";
       }
 
