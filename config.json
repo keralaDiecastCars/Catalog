@@ -9,7 +9,7 @@
             "serialStart": 1,
             "totalProducts": 63,
             "imagePath": "cca-zinc/",
-            "imageExtension": ".jpg",
+            "imageExtension": ".JPG",
             "imageStart": 1,
             "pdfNamePrefix": "CCA_Zinc",
             "coverImage": "background/cca-zinc.JPG"
