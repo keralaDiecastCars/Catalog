@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Order</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+      /* ================= BASE ================= */
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 20px 16px;
+        background: #fff;
+        margin: 2%;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        background: #487fb2;
+        color: #fff;
+        padding: 12px;
+        text-align: left;
+      }
+
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+      }
+
+      /* ================= HEADER ================= */
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .page-header h1 {
+        font-size: 32px;
+        margin: 0;
+      }
+
+      .back-btn {
+        background: transparent;
+        border: 1px solid #ccc;
+        padding: 8px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      /* ================= PRODUCT ROW ================= */
+      .product-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .product-img {
+        width: 65px;
+        height: 65px;
+        object-fit: cover;
+        border-radius: 8px;
+      }
+
+      /* ================= QTY CONTROL ================= */
+      .qty {
+        display: inline-flex;
+        align-items: center;
+        border: 1px solid #ddd;
+        border-radius: 999px;
+        overflow: hidden;
+        height: 44px;
+      }
+
+      .qty button {
+        width: 44px;
+        height: 44px;
+        border: none;
+        background: #f2f2f2;
+        cursor: pointer;
+        font-size: 20px;
+        font-weight: 600;
+      }
+
+      .qty span {
+        width: 48px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 44px;
+      }
+
+      .save-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 6px;
+      }
+
+      .save-pdf {
+        background: #000;
+        color: #fff;
+        border: none;
+        padding: 14px 22px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-size: 15px;
+      }
+
+      .save-pdf:disabled {
+        background: #999;
+        cursor: not-allowed;
+      }
+
+      .error-text {
+        font-size: 13px;
+        color: #d32f2f;
+      }
+
+      /* ================= MODAL ================= */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+
+      .modal {
+        background: #fff;
+        width: 90%;
+        max-width: 360px;
+        padding: 20px;
+        border-radius: 12px;
+      }
+
+      .modal label {
+        display: block;
+        margin-bottom: 14px;
+      }
+
+      .modal input {
+        width: 94%;
+        padding: 12px;
+        margin-top: 6px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .modal-actions .primary {
+        background: #487fb2;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+      }
+      table {
+        table-layout: fixed;
+      }
+
+      /* No. column */
+      th:nth-child(1),
+      td:nth-child(1) {
+        width: 10%;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      /* Product column */
+      th:nth-child(2),
+      td:nth-child(2) {
+        width: 50%;
+      }
+
+      /* Qty column */
+      th:nth-child(3),
+      td:nth-child(3) {
+        width: 40%;
+        text-align: center;
+      }
+
+      @media (max-width: 600px) {
+        th:nth-child(1),
+        td:nth-child(1) {
+          font-size: 13px;
+        }
+
+        .product-cell span {
+          font-size: 13px;
+        }
+      }
+      .modal button {
+        border-radius: 8px;
+      }
+
+      /* ================= MOBILE ================= */
+      @media (max-width: 600px) {
+        body {
+          padding: 16px;
+          margin-bottom: 5%;
+        }
+
+        .modal {
+          max-width: 280px;
+          height: 252px;
+        }
+
+        .modal input {
+          width: 91%;
+        }
+
+        .modal button {
+          border-radius: 8px;
+        }
+
+        .modal h3 {
+          text-align: center;
+          margin-top: 4px;
+          margin-bottom: 20px !important;
+        }
+
+        .page-header h1 {
+          font-size: 26px;
+        }
+
+        table {
+          table-layout: fixed;
+        }
+
+        .product-img {
+          width: 48px;
+          height: 48px;
+        }
+
+        .product-cell span {
+          font-size: 14px;
+          font-weight: 600;
+        }
+
+        td {
+          padding: 8px 6px;
+        }
+
+        .qty {
+          height: 36px;
+        }
+
+        .qty button {
+          width: 36px;
+          height: 36px;
+          font-size: 18px;
+        }
+
+        .qty span {
+          width: 40px;
+          font-size: 14px;
+          line-height: 36px;
+        }
+
+        .footer-summary {
+          flex-direction: column;
+          gap: 14px;
+          padding: 0;
+        }
+
+        .save-wrapper {
+          align-items: stretch;
+        }
+
+        .save-pdf {
+          width: 100%;
+          border-radius: 14px;
+        }
+      }
+      .error-text {
+        text-align: center;
+      }
+
+      .save-btn {
+        display: flex;
+      }
+
+      .footer-summary {
+        margin-top: 20px;
+      }
+
+      /* Center error text */
+      .error-text {
+        text-align: center;
+        font-size: 14px;
+        color: #d32f2f;
+        margin-bottom: 10px;
+      }
+
+      /* Bottom row layout */
+      .footer-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* Totals on left */
+      .totals {
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      /* Mobile stacking */
+      @media (max-width: 600px) {
+        .footer-bottom {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .save-pdf {
+          width: 100%;
+        }
+
+        .totals {
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1 id="heading"></h1>
+        <button class="back-btn" onclick="goBack()">← Back</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>No.</th>
+            <th id="priceHeader">Product</th>
+            <th>Qty</th>
+          </tr>
+        </thead>
+
+        <tbody id="tbody"></tbody>
+      </table>
+
+      <div class="footer-summary" style="padding: 0px 10px">
+        <!-- Centered error -->
+        <div class="error-text" id="minQtyError"></div>
+
+        <!-- Totals + Button row -->
+        <div class="footer-bottom">
+          <div class="totals">
+            <div>Total Qty: <span id="totalQty">0</span></div>
+            <div>Total Price: Rs <span id="totalPrice">0</span></div>
+          </div>
+
+          <button class="save-pdf" id="saveBtn" onclick="openModal()" disabled>
+            Save PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL -->
+    <div id="checkoutModal" class="modal-overlay">
+      <div class="modal">
+        <h3>Customer Details</h3>
+
+        <label>
+          Name *
+          <input type="text" id="custName" />
+        </label>
+
+        <label>
+          Phone *
+          <input type="tel" id="custPhone" maxlength="10" />
+        </label>
+
+        <div class="modal-actions">
+          <button onclick="closeModal()">Cancel</button>
+          <button class="primary" onclick="confirmAndSavePDF()">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let CONFIG;
+      const imageCache = {};
+      const params = new URLSearchParams(window.location.search);
+      const collectionId = params.get("collection");
+
+      async function loadConfig() {
+        const res = await fetch("config.json");
+        const data = await res.json();
+        CONFIG = data.collections.find((c) => c.id === collectionId);
+
+        heading.textContent = CONFIG.heading;
+        priceHeader.textContent = `Product`;
+        minQtyError.textContent = `* Minimum order quantity is ${CONFIG.minQuantity}`;
+
+        await loadProducts();
+        updateTotals();
+      }
+
+      async function loadImage(url) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            const c = document.createElement("canvas");
+            c.width = img.width;
+            c.height = img.height;
+            c.getContext("2d").drawImage(img, 0, 0);
+            resolve(c.toDataURL("image/jpeg"));
+          };
+          img.onerror = () => resolve(null);
+          img.src = url;
+        });
+      }
+
+      async function loadProducts() {
+        tbody.innerHTML = "";
+        for (let i = 0; i < CONFIG.totalProducts; i++) {
+          const serial = CONFIG.serialStart + i;
+          const code = `#${CONFIG.serialPrefix}${String(serial).padStart(
+            3,
+            "0"
+          )}`;
+          const img = `${CONFIG.imagePath}${CONFIG.imageStart + i}${
+            CONFIG.imageExtension
+          }`;
+
+          imageCache[img] = await loadImage(img);
+
+          tbody.insertAdjacentHTML(
+            "beforeend",
+            `
+        <tr data-code="${code}" data-image="${img}">
+          <td class="col-no">${i + 1}</td>
+          <td>
+            <div class="product-cell">
+              <img src="${img}" class="product-img">
+              <span>${code}</span>
+            </div>
+          </td>
+          <td>
+            <div class="qty">
+              <button onclick="changeQty(this,-1)">−</button>
+              <span class="count">0</span>
+              <button onclick="changeQty(this,1)">+</button>
+            </div>
+          </td>
+        </tr>
+      `
+          );
+        }
+      }
+
+      function changeQty(btn, delta) {
+        const span = btn.parentElement.querySelector(".count");
+        span.textContent = Math.max(0, Number(span.textContent) + delta);
+        updateTotals();
+      }
+
+      function updateTotals() {
+        let totalQty = 0;
+        document
+          .querySelectorAll(".count")
+          .forEach((c) => (totalQty += Number(c.textContent)));
+
+        document.getElementById("totalQty").textContent = totalQty;
+        document.getElementById("totalPrice").textContent =
+          totalQty * CONFIG.unitPrice;
+
+        saveBtn.disabled = totalQty < CONFIG.minQuantity;
+        minQtyError.textContent =
+          totalQty < CONFIG.minQuantity
+            ? `* Minimum order quantity is ${CONFIG.minQuantity}`
+            : "";
+      }
+
+      function goBack() {
+        window.location.href = "index.html";
+      }
+
+      function openModal() {
+        checkoutModal.style.display = "flex";
+      }
+
+      function closeModal() {
+        checkoutModal.style.display = "none";
+      }
+
+      function confirmAndSavePDF() {
+        const name = custName.value.trim();
+        const phone = custPhone.value.trim();
+        if (!name) return alert("Name is required");
+        if (!/^\d{10}$/.test(phone)) return alert("Enter valid phone number");
+        closeModal();
+        saveAsPDF(name, phone, generateInvoiceId(name));
+      }
+
+      function generateInvoiceId(name) {
+        return (
+          name.substring(0, 2).toUpperCase() +
+          Math.floor(100 + Math.random() * 900)
+        );
+      }
+
+      const printedDate = new Date().toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+
+      function saveAsPDF(name, phone, invoiceId) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF("p", "mm", "a4");
+
+        /* ===== PAGE SETUP ===== */
+        const MARGIN_LEFT = 15;
+        const PAGE_WIDTH = 210;
+        const CONTENT_WIDTH = 180;
+
+        /* ===== COLUMN POSITIONS ===== */
+        const COL_NO = 25;
+        const COL_PRODUCT = 40; // Product column START (header, image, text)
+        const COL_QTY = 185;
+
+        /* ===== IMAGE SETUP ===== */
+        const IMG_SIZE = 14;
+        const IMG_GAP = 6;
+
+        /* ===== ROW SETUP ===== */
+        const ROW_HEIGHT = 16;
+
+        let y = 20;
+
+        /* ===== HEADER ===== */
+        doc.setFontSize(18);
+        doc.text(CONFIG.heading || "Order Summary", MARGIN_LEFT, y);
+
+        y += 8;
+        doc.setFontSize(11);
+
+        doc.text(`Invoice ID: ${invoiceId}`, MARGIN_LEFT, y);
+        doc.text(`Date: ${printedDate}`, MARGIN_LEFT, y + 5);
+
+        doc.text(`Customer: ${name}`, PAGE_WIDTH - MARGIN_LEFT, y, {
+          align: "right",
+        });
+        doc.text(`Phone: ${phone}`, PAGE_WIDTH - MARGIN_LEFT, y + 5, {
+          align: "right",
+        });
+
+        y += 14;
+
+        /* ===== TABLE HEADER ===== */
+        doc.setFillColor(72, 127, 178);
+        doc.rect(MARGIN_LEFT, y, CONTENT_WIDTH, 8, "F");
+
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(12);
+        doc.text("No.", COL_NO, y + 5.5);
+        doc.text("Product", COL_PRODUCT, y + 5.5);
+        doc.text("Qty", COL_QTY, y + 5.5, { align: "right" });
+
+        y += 8;
+        doc.setTextColor(0, 0, 0);
+
+        /* ===== TABLE ROWS ===== */
+        let rowNo = 1;
+        let totalQty = 0;
+
+        document.querySelectorAll("#tbody tr").forEach((row) => {
+          const qty = Number(row.querySelector(".count").textContent);
+          if (qty === 0) return;
+
+          if (y > 275) {
+            doc.addPage();
+            y = 20;
+          }
+
+          const code = row.dataset.code;
+          const imgUrl = row.dataset.image;
+          const imgData = imageCache[imgUrl];
+
+          const rowMiddle = y + ROW_HEIGHT / 2 + 1;
+
+          /* ROW SEPARATOR */
+          doc.setDrawColor(220);
+          doc.line(
+            MARGIN_LEFT,
+            y + ROW_HEIGHT,
+            PAGE_WIDTH - MARGIN_LEFT,
+            y + ROW_HEIGHT
+          );
+
+          /* NO */
+          doc.setFontSize(12);
+          doc.text(String(rowNo), COL_NO, rowMiddle, { align: "center" });
+
+          /* IMAGE (starts EXACTLY under Product heading) */
+          if (imgData) {
+            doc.addImage(
+              imgData,
+              "JPEG",
+              COL_PRODUCT,
+              y + 1,
+              IMG_SIZE,
+              IMG_SIZE
+            );
+          }
+
+          /* PRODUCT CODE (same column, after image) */
+          doc.text(code, COL_PRODUCT + IMG_SIZE + IMG_GAP, rowMiddle);
+
+          /* QTY */
+          doc.text(String(qty), COL_QTY, rowMiddle, { align: "right" });
+
+          totalQty += qty;
+          rowNo++;
+          y += ROW_HEIGHT;
+        });
+
+        /* ===== TOTALS ===== */
+        y += 4;
+        doc.setDrawColor(0);
+        doc.line(MARGIN_LEFT, y, PAGE_WIDTH - MARGIN_LEFT, y);
+
+        y += 7;
+        doc.setFontSize(12);
+        doc.text(`Total Qty: ${totalQty}`, MARGIN_LEFT, y);
+        doc.text(
+          `Total Price: Rs ${totalQty * CONFIG.unitPrice}`,
+          PAGE_WIDTH - MARGIN_LEFT,
+          y,
+          { align: "right" }
+        );
+
+        /* ===== SAVE ===== */
+        doc.save(`${CONFIG.pdfNamePrefix}_${invoiceId}.pdf`);
+      }
+
+      loadConfig();
+    </script>
+  </body>
+</html>

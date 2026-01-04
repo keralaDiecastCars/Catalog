@@ -1,0 +1,74 @@
+{
+    "collections": [
+        {
+            "id": "cca-zinc",
+            "heading": "CCA Zinc Alloy",
+            "unitPrice": 350,
+            "minQuantity": 24,
+            "serialPrefix": "CCA",
+            "serialStart": 1,
+            "totalProducts": 63,
+            "imagePath": "cca-zinc/",
+            "imageExtension": ".jpg",
+            "imageStart": 1,
+            "pdfNamePrefix": "CCA_Zinc",
+            "coverImage": "background/cca-zinc.JPG"
+        },
+        {
+            "id": "cca-acrylic",
+            "heading": "CCA Acrylic",
+            "unitPrice": 415,
+            "minQuantity": 24,
+            "serialPrefix": "CAA",
+            "serialStart": 1,
+            "totalProducts": 19,
+            "imagePath": "cca-acrylic/",
+            "imageExtension": ".jpeg",
+            "imageStart": 1,
+            "pdfNamePrefix": "CCA_Acrylic",
+            "coverImage": "background/cca-acrylic.jpeg"
+        },
+        {
+            "id": "bburago-ferrari",
+            "heading": "Bburago Ferrari",
+            "unitPrice": 450,
+            "minQuantity": 12,
+            "serialPrefix": "BBF",
+            "serialStart": 101,
+            "totalProducts": 8,
+            "imagePath": "bburago-ferrari/",
+            "imageExtension": ".jpeg",
+            "imageStart": 1,
+            "pdfNamePrefix": "Bburago_Ferrari",
+            "coverImage": "background/bburago-ferrari.jpeg"
+        },
+        {
+            "id": "bburago-normal",
+            "heading": "Bburago",
+            "unitPrice": 400,
+            "minQuantity": 24,
+            "serialPrefix": "BBN",
+            "serialStart": 1,
+            "totalProducts": 21,
+            "imagePath": "bburago-normal/",
+            "imageExtension": ".jpeg",
+            "imageStart": 1,
+            "pdfNamePrefix": "Bburago",
+            "coverImage": "background/bburago-normal.JPG"
+        },
+        {
+            "id": "enchery",
+            "heading": "Enchery",
+            "unitPrice": 1030,
+            "minQuantity": 18,
+            "serialPrefix": "ENY",
+            "serialStart": 1,
+            "totalProducts": 9,
+            "imagePath": "enchery/",
+            "imageExtension": ".jpeg",
+            "imageStart": 1,
+            "pdfNamePrefix": "Enchery",
+            "coverImage": "background/enchery.PNG"
+        }
+    ]
+}

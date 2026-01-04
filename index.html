@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Select Collection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 24px;
+        background: #f4f6f8;
+        margin-left: 3%;
+        margin-right: 3%;
+      }
+
+      /* ===== BASE (DESKTOP / DEFAULT) ===== */
+      h1 {
+        font-size: 32px;
+        line-height: 1.2;
+        margin-bottom: 24px;
+      }
+
+      .card h3 {
+        font-size: 18px;
+        line-height: 1.3;
+      }
+
+      .price {
+        font-size: 15px;
+      }
+
+      /* ===== MOBILE ===== */
+      @media (max-width: 600px) {
+        h1 {
+          font-size: 28px;
+          line-height: 1.15;
+          margin-bottom: 20px;
+        }
+
+        .card h3 {
+          font-size: 15px;
+          line-height: 1.35;
+          margin: 10px 0 4px;
+        }
+
+        .price {
+          font-size: 14px;
+          font-weight: 600;
+        }
+      }
+
+      /* DESKTOP / DEFAULT */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+      }
+
+      .card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 14px;
+        cursor: pointer;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+      }
+
+      .card img {
+        width: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+
+      .card h3 {
+        margin: 12px 0 6px;
+      }
+
+      .price {
+        font-weight: 600;
+        color: #487fb2;
+      }
+
+      /* ✅ MOBILE FIX */
+      @media (max-width: 600px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 12px;
+        }
+
+        body {
+          padding: 16px;
+          margin-left: 3%;
+          margin-right: 3%;
+        }
+
+        .card {
+          padding: 12px;
+        }
+
+        .card img {
+          aspect-ratio: 1 / 1;
+          object-fit: cover;
+          border-radius: 7px;
+        }
+
+        .card h3 {
+          font-size: 14px;
+        }
+
+        .price {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Select Collection</h1>
+    <div class="grid" id="grid"></div>
+
+    <script>
+      async function loadCards() {
+        const res = await fetch("config.json");
+        const data = await res.json();
+
+        const grid = document.getElementById("grid");
+
+        data.collections.forEach((c) => {
+          grid.insertAdjacentHTML(
+            "beforeend",
+            `
+          <div class="card" onclick="openCollection('${c.id}')">
+            <img src="${c.coverImage}">
+            <h3>${c.heading}</h3>
+            <div class="price">Unit Price: Rs ${c.unitPrice}</div>
+          </div>
+          `
+          );
+        });
+      }
+
+      function openCollection(id) {
+        window.location.href = `order.html?collection=${id}`;
+      }
+
+      loadCards();
+    </script>
+  </body>
+</html>
